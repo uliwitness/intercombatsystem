@@ -1,0 +1,195 @@
+//
+//  CombatTestView.swift
+//  intercombatsystem
+//
+//  Created by Uli Kusterer on 18/10/15.
+//  Copyright © 2015 Uli Kusterer. All rights reserved.
+//
+
+import Cocoa
+import intercombatsystem_cpp
+
+class CombatTestView: NSView {
+	
+	var playerPosition : NSPoint = NSPoint( x: 0, y: -50 )
+	var	playerAngle : Double = 0.0
+	var	targetAngle : Double = 0.0
+	var playerTargetAngle : Double
+	{
+		get
+		{
+			var	playerTargetAngle = atan2( 0.0, 0.0 )
+			let	targetPosition = NSZeroPoint
+			if( (playerPosition.x > targetPosition.x) )
+			{
+				playerTargetAngle = atan2( Double(playerPosition.x - targetPosition.x), Double(targetPosition.y - playerPosition.y) );
+			}
+			else if( (playerPosition.x < targetPosition.x) )
+			{
+				playerTargetAngle = (M_PI * 2.0) - atan2( Double(targetPosition.x - playerPosition.x), Double(targetPosition.y - playerPosition.y) );
+			}
+			
+			//Swift.print("playerAngle: \(Double(playerAngle * 180.0) / M_PI)")
+			//Swift.print("playerTargetAngle: \((playerTargetAngle * 180.0) / M_PI)")
+			var	playerTargetAngleRelative = (playerTargetAngle - playerAngle)
+			if( -playerTargetAngleRelative > M_PI )
+			{
+				playerTargetAngleRelative = (M_PI * 2) + playerTargetAngleRelative
+			}
+			if( playerTargetAngleRelative > M_PI )
+			{
+				playerTargetAngleRelative = -((M_PI * 2) - playerTargetAngleRelative)
+			}
+			//Swift.print("playerTargetAngle (relative): \((playerTargetAngleRelative * 180.0) / M_PI)")
+			
+			return playerTargetAngleRelative
+		}
+	}
+	
+    override func drawRect(dirtyRect: NSRect) {
+        super.drawRect(dirtyRect)
+		
+		NSGraphicsContext.saveGraphicsState()
+		
+		// Make our coordinate system centered in window to make for more sensible resizing:
+		let	tf : NSAffineTransform = NSAffineTransform()
+		tf.translateXBy( self.bounds.width / 2, yBy: self.bounds.height / 2 )
+		tf.set()
+		
+		// Draw target:
+		let		targetSize : CGFloat = 32.0
+		let		targetSizeSixth = targetSize / 6.0
+		let		targetSizeHalf = targetSize / 2.0
+		let		box : NSRect = NSRect( x: -targetSizeHalf, y: -targetSizeHalf, width: targetSize, height: targetSize)
+		NSColor.whiteColor().set()
+        NSBezierPath(ovalInRect: box).fill()
+		NSColor.blackColor().set()
+        NSBezierPath(ovalInRect: box).stroke()
+		NSColor.redColor().set()
+        NSBezierPath(ovalInRect: box.insetBy(dx: targetSizeSixth, dy: targetSizeSixth) ).stroke()
+        NSBezierPath(ovalInRect: box.insetBy(dx: targetSizeSixth * 2, dy: targetSizeSixth * 2) ).stroke()
+		NSBezierPath.strokeLineFromPoint( NSPoint( x: -targetSizeHalf, y: 0), toPoint: NSPoint( x: targetSizeHalf, y: 0) )
+		NSBezierPath.strokeLineFromPoint( NSPoint( x: 0, y: -targetSizeHalf), toPoint: NSPoint( x: 0, y: targetSizeHalf) )
+
+		NSGraphicsContext.saveGraphicsState()
+		let tf2 : NSAffineTransform = NSAffineTransform()
+		tf2.rotateByRadians( CGFloat(targetAngle) )
+		tf2.concat()
+		
+		NSColor(calibratedRed: 1, green: 0, blue: 0, alpha: 0.6).set()
+		let		triangle = NSBezierPath()
+		triangle.moveToPoint( NSPoint( x: -6.0, y: targetSizeHalf ) )
+		triangle.lineToPoint( NSPoint( x: -0.0, y: targetSizeHalf + 8.0 ) )
+		triangle.lineToPoint( NSPoint( x: 6.0, y: targetSizeHalf ) )
+		triangle.lineToPoint( NSPoint( x: -6.0, y: targetSizeHalf ) )
+		triangle.fill()
+		NSGraphicsContext.restoreGraphicsState()
+
+		// Draw player:
+		let		playerSize : CGFloat = 32.0
+		let		playerSizeHalf = playerSize / 2.0
+		let		playerBox : NSRect = NSRect( x: playerPosition.x - playerSizeHalf, y: playerPosition.y - playerSizeHalf, width: playerSize, height: playerSize)
+		NSColor(calibratedRed: 0, green: 0, blue: 1, alpha: 0.6).set()
+        NSBezierPath(ovalInRect: playerBox).fill()
+		NSColor.blueColor().set()
+        NSBezierPath(ovalInRect: playerBox).stroke()
+		
+		NSGraphicsContext.saveGraphicsState()
+		let tf3 : NSAffineTransform = NSAffineTransform()
+		tf3.translateXBy( playerPosition.x, yBy: playerPosition.y )
+		tf3.rotateByRadians( CGFloat(playerAngle) )
+		tf3.concat()
+		
+		NSColor(calibratedRed: 0, green: 0, blue: 1, alpha: 0.6).set()
+		let		triangle2 = NSBezierPath()
+		triangle2.moveToPoint( NSPoint( x: -6.0, y: playerSizeHalf ) )
+		triangle2.lineToPoint( NSPoint( x: -0.0, y: playerSizeHalf + 8.0 ) )
+		triangle2.lineToPoint( NSPoint( x: 6.0, y: playerSizeHalf ) )
+		triangle2.lineToPoint( NSPoint( x: -6.0, y: playerSizeHalf ) )
+		triangle2.fill()
+		NSGraphicsContext.restoreGraphicsState()
+		
+		NSGraphicsContext.restoreGraphicsState()
+    }
+	
+	override func mouseDown(theEvent: NSEvent) {
+		self.window?.makeFirstResponder( self )
+		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
+		hitPosition.x -= self.bounds.width / 2
+		hitPosition.y -= self.bounds.height / 2
+		playerPosition = hitPosition
+		self.refreshDisplay();
+	}
+
+	override func mouseDragged(theEvent: NSEvent) {
+		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
+		hitPosition.x -= self.bounds.width / 2
+		hitPosition.y -= self.bounds.height / 2
+		playerPosition = hitPosition
+		self.refreshDisplay();
+	}
+	
+	override func keyDown(theEvent: NSEvent) {
+		let theChar : String = theEvent.characters!
+		if( !theChar.isEmpty )
+		{
+			if theEvent.modifierFlags.contains( .ShiftKeyMask )
+			{
+				switch( theChar[theChar.startIndex] )
+				{
+					case Character(UnicodeScalar(NSLeftArrowFunctionKey)):
+						targetAngle += (M_PI / 180.0) * 6.0
+					case Character(UnicodeScalar(NSRightArrowFunctionKey)):
+						targetAngle -= (M_PI / 180.0) * 6.0
+					default:
+						break
+				}
+				
+				if( targetAngle >= (M_PI * 2.0) )
+				{
+					targetAngle -= (M_PI * 2.0);
+				}
+				if( targetAngle < 0.0 )
+				{
+					targetAngle += (M_PI * 2.0);
+				}
+			}
+			else
+			{
+				switch( theChar[theChar.startIndex] )
+				{
+					case Character(UnicodeScalar(NSLeftArrowFunctionKey)):
+						playerAngle += (M_PI / 180.0) * 6.0
+					case Character(UnicodeScalar(NSRightArrowFunctionKey)):
+						playerAngle -= (M_PI / 180.0) * 6.0
+					default:
+						break
+				}
+				
+				if( playerAngle >= (M_PI * 2.0) )
+				{
+					playerAngle -= (M_PI * 2.0);
+				}
+				if( playerAngle < 0.0 )
+				{
+					playerAngle += (M_PI * 2.0);
+				}
+			}
+		}
+		self.refreshDisplay();
+	}
+	
+	override func becomeFirstResponder() -> Bool {
+		return true
+	}
+	
+	func refreshDisplay() {
+		
+		Swift.print("playerTargetAngle (relative): \((self.playerTargetAngle * 180.0) / M_PI)")
+		
+		self.setNeedsDisplayInRect( self.bounds );
+		
+		let s : intercombatsystem_cpp.Swifty = intercombatsystem_cpp.Swifty()
+		s.method()
+	}
+}
