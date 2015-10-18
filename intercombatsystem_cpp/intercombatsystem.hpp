@@ -1,5 +1,5 @@
 //
-//  intercombatsystem_number.h
+//  intercombatsystem.hpp
 //  intercombatsystem
 //
 //  Created by Uli Kusterer on 18/10/15.

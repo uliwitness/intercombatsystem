@@ -6,4 +6,4 @@
 //  Copyright © 2015 Uli Kusterer. All rights reserved.
 //
 
-#include	"intercombatsystem.h"
+#include	"intercombatsystem_cp2s.h"

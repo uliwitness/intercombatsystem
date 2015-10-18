@@ -13,12 +13,12 @@
 		550774BB1BD38F7800299EC5 /* CombatTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550774BA1BD38F7800299EC5 /* CombatTestView.swift */; settings = {ASSET_TAGS = (); }; };
 		550774C81BD3B1B100299EC5 /* intercombatsystem_cpp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */; };
 		550774C91BD3B1B100299EC5 /* intercombatsystem_cpp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		550774CF1BD3B24700299EC5 /* intercombatsystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550774CE1BD3B24700299EC5 /* intercombatsystem.swift */; settings = {ASSET_TAGS = (); }; };
 		550774D11BD3B40800299EC5 /* intercombatsystem_bridging_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */; settings = {ASSET_TAGS = (); }; };
-		550774D51BD3B49F00299EC5 /* intercombatsystem_cpp.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 550774D31BD3B49F00299EC5 /* intercombatsystem_cpp.hpp */; settings = {ASSET_TAGS = (); }; };
 		55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */; settings = {ASSET_TAGS = (); }; };
-		55CD86F41BD41A81008E93A9 /* intercombatsystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 55CD86F21BD41A81008E93A9 /* intercombatsystem.h */; settings = {ASSET_TAGS = (); }; };
-		55CD86F61BD42250008E93A9 /* intercombatsystem_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86F51BD42250008E93A9 /* intercombatsystem_cpp.cpp */; settings = {ASSET_TAGS = (); }; };
+		55CD86F81BD43387008E93A9 /* intercombatsystem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */; settings = {ASSET_TAGS = (); }; };
+		55CD87021BD433BA008E93A9 /* intercombatsystem_cp2s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86FF1BD433BA008E93A9 /* intercombatsystem_cp2s.cpp */; settings = {ASSET_TAGS = (); }; };
+		55CD87031BD433BA008E93A9 /* intercombatsystem_cp2s.h in Headers */ = {isa = PBXBuildFile; fileRef = 55CD87001BD433BA008E93A9 /* intercombatsystem_cp2s.h */; settings = {ASSET_TAGS = (); }; };
+		55CD87041BD433BA008E93A9 /* intercombatsystem_cp2s.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD87011BD433BA008E93A9 /* intercombatsystem_cp2s.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,12 +54,12 @@
 		550774BA1BD38F7800299EC5 /* CombatTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombatTestView.swift; sourceTree = "<group>"; };
 		550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = intercombatsystem_cpp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		550774C51BD3B1B100299EC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		550774CE1BD3B24700299EC5 /* intercombatsystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = intercombatsystem.swift; sourceTree = "<group>"; };
 		550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem_bridging_header.h; sourceTree = "<group>"; };
-		550774D31BD3B49F00299EC5 /* intercombatsystem_cpp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = intercombatsystem_cpp.hpp; sourceTree = "<group>"; };
 		55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem.cpp; sourceTree = "<group>"; };
-		55CD86F21BD41A81008E93A9 /* intercombatsystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem.h; sourceTree = "<group>"; };
-		55CD86F51BD42250008E93A9 /* intercombatsystem_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem_cpp.cpp; sourceTree = "<group>"; };
+		55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = intercombatsystem.hpp; sourceTree = "<group>"; };
+		55CD86FF1BD433BA008E93A9 /* intercombatsystem_cp2s.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem_cp2s.cpp; sourceTree = "<group>"; };
+		55CD87001BD433BA008E93A9 /* intercombatsystem_cp2s.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem_cp2s.h; sourceTree = "<group>"; };
+		55CD87011BD433BA008E93A9 /* intercombatsystem_cp2s.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = intercombatsystem_cp2s.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,15 +114,23 @@
 		550774C21BD3B1B100299EC5 /* intercombatsystem_cpp */ = {
 			isa = PBXGroup;
 			children = (
-				550774CE1BD3B24700299EC5 /* intercombatsystem.swift */,
 				550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */,
-				550774D31BD3B49F00299EC5 /* intercombatsystem_cpp.hpp */,
-				55CD86F51BD42250008E93A9 /* intercombatsystem_cpp.cpp */,
-				55CD86F21BD41A81008E93A9 /* intercombatsystem.h */,
 				55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */,
+				55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */,
+				55CD87051BD433C1008E93A9 /* generated by cp2s */,
 				550774C51BD3B1B100299EC5 /* Info.plist */,
 			);
 			path = intercombatsystem_cpp;
+			sourceTree = "<group>";
+		};
+		55CD87051BD433C1008E93A9 /* generated by cp2s */ = {
+			isa = PBXGroup;
+			children = (
+				55CD86FF1BD433BA008E93A9 /* intercombatsystem_cp2s.cpp */,
+				55CD87001BD433BA008E93A9 /* intercombatsystem_cp2s.h */,
+				55CD87011BD433BA008E93A9 /* intercombatsystem_cp2s.swift */,
+			);
+			name = "generated by cp2s";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,9 +140,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55CD86F81BD43387008E93A9 /* intercombatsystem.hpp in Headers */,
 				550774D11BD3B40800299EC5 /* intercombatsystem_bridging_header.h in Headers */,
-				550774D51BD3B49F00299EC5 /* intercombatsystem_cpp.hpp in Headers */,
-				55CD86F41BD41A81008E93A9 /* intercombatsystem.h in Headers */,
+				55CD87031BD433BA008E93A9 /* intercombatsystem_cp2s.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,9 +256,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55CD86F61BD42250008E93A9 /* intercombatsystem_cpp.cpp in Sources */,
-				550774CF1BD3B24700299EC5 /* intercombatsystem.swift in Sources */,
 				55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */,
+				55CD87021BD433BA008E93A9 /* intercombatsystem_cp2s.cpp in Sources */,
+				55CD87041BD433BA008E93A9 /* intercombatsystem_cp2s.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
