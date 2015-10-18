@@ -6,6 +6,26 @@ extern "C"
 {
 #endif /* __cplusplus */
 
+typedef struct buff buff;
+
+void buff_deinit( buff* _this );
+buff* buff_init( int type, double amount, double max_amount, double start_angle, double relative_angle, double max_distance, double bleedthrough, bool permanent );
+int buff_get_type( buff* _this );
+void buff_set_type( buff* _this,  int inType );
+double buff_get_bleedthrough( buff* _this );
+void buff_set_bleedthrough( buff* _this,  double n );
+double buff_get_amount( buff* _this );
+void buff_set_amount( buff* _this,  double n );
+double buff_get_max_amount( buff* _this );
+void buff_set_max_amount( buff* _this,  double n );
+double buff_get_start_angle( buff* _this );
+void buff_set_start_angle( buff* _this,  double n );
+double buff_get_relative_angle( buff* _this );
+void buff_set_relative_angle( buff* _this,  double n );
+double buff_get_max_distance( buff* _this );
+void buff_set_max_distance( buff* _this,  double n );
+bool buff_get_permanent( buff* _this );
+void buff_set_permanent( buff* _this,  bool n );
 typedef struct intercombatactor intercombatactor;
 
 void intercombatactor_deinit( intercombatactor* _this );
@@ -18,6 +38,11 @@ double intercombatactor_get_x( intercombatactor* _this );
 void intercombatactor_set_x( intercombatactor* _this,  double inX );
 double intercombatactor_get_y( intercombatactor* _this );
 void intercombatactor_set_y( intercombatactor* _this,  double inY );
+double intercombatactor_get_health( intercombatactor* _this );
+void intercombatactor_set_health( intercombatactor* _this,  double n );
+void intercombatactor_add_buff( intercombatactor* _this,  buff * inBuff );
+void intercombatactor_add_value( intercombatactor* _this,  buff * inValue );
+void intercombatactor_hit( intercombatactor* _this,  buff* inAttack, double currDistance, double currAngle );
 
 #if __cplusplus
 }
