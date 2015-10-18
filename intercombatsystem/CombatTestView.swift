@@ -11,54 +11,8 @@ import intercombatsystem_cpp
 
 class CombatTestView: NSView {
 	
-	var playerPosition : NSPoint = NSPoint( x: 0, y: -50 )
-	var	playerAngle : Double = 0.0
-	var	targetAngle : Double = 0.0
-	var playerTargetAngle : Double
-	{
-		get
-		{
-			var	playerTargetAngle = atan2( 0.0, 0.0 )
-			let	targetPosition = NSZeroPoint
-			if( (playerPosition.x > targetPosition.x) )
-			{
-				playerTargetAngle = atan2( Double(playerPosition.x - targetPosition.x), Double(targetPosition.y - playerPosition.y) );
-			}
-			else if( (playerPosition.x < targetPosition.x) )
-			{
-				playerTargetAngle = (M_PI * 2.0) - atan2( Double(targetPosition.x - playerPosition.x), Double(targetPosition.y - playerPosition.y) );
-			}
-			
-			//Swift.print("playerAngle: \(Double(playerAngle * 180.0) / M_PI)")
-			//Swift.print("playerTargetAngle: \((playerTargetAngle * 180.0) / M_PI)")
-			var	playerTargetAngleRelative = (playerTargetAngle - playerAngle)
-			if( -playerTargetAngleRelative > M_PI )
-			{
-				playerTargetAngleRelative = (M_PI * 2) + playerTargetAngleRelative
-			}
-			if( playerTargetAngleRelative > M_PI )
-			{
-				playerTargetAngleRelative = -((M_PI * 2) - playerTargetAngleRelative)
-			}
-			//Swift.print("playerTargetAngle (relative): \((playerTargetAngleRelative * 180.0) / M_PI)")
-			
-			return playerTargetAngleRelative
-		}
-	}
-	var playerTargetDistance : CGFloat
-	{
-		get
-		{
-			let	targetPosition = NSZeroPoint
-			var	distance : CGFloat = 0.0;
-			
-			let xdiff = playerPosition.x - targetPosition.x;
-			let ydiff = playerPosition.y - targetPosition.y;
-			distance = sqrt( (xdiff * xdiff) + (ydiff * ydiff) )
-			
-			return distance;
-		}
-	}
+	var	player : intercombatsystem_cpp.intercombatactor = .init()
+	var	target : intercombatsystem_cpp.intercombatactor = .init()
 	
 /**
 Draw our view contents, i.e. a player, a target, direction indicators etc.
@@ -90,7 +44,7 @@ Draw our view contents, i.e. a player, a target, direction indicators etc.
 
 		NSGraphicsContext.saveGraphicsState()
 		let tf2 : NSAffineTransform = NSAffineTransform()
-		tf2.rotateByRadians( CGFloat(targetAngle) )
+		tf2.rotateByRadians( CGFloat(target.get_angle()) )
 		tf2.concat()
 		
 		NSColor(calibratedRed: 1, green: 0, blue: 0, alpha: 0.6).set()
@@ -103,9 +57,9 @@ Draw our view contents, i.e. a player, a target, direction indicators etc.
 		NSGraphicsContext.restoreGraphicsState()
 
 		// Draw player:
-		let		playerSize : CGFloat = 32.0
+		let		playerSize = 32.0
 		let		playerSizeHalf = playerSize / 2.0
-		let		playerBox : NSRect = NSRect( x: playerPosition.x - playerSizeHalf, y: playerPosition.y - playerSizeHalf, width: playerSize, height: playerSize)
+		let		playerBox : NSRect = NSRect( x: player.get_x() - playerSizeHalf, y: player.get_y() - playerSizeHalf, width: playerSize, height: playerSize)
 		NSColor(calibratedRed: 0, green: 0, blue: 1, alpha: 0.6).set()
         NSBezierPath(ovalInRect: playerBox).fill()
 		NSColor.blueColor().set()
@@ -113,8 +67,8 @@ Draw our view contents, i.e. a player, a target, direction indicators etc.
 		
 		NSGraphicsContext.saveGraphicsState()
 		let tf3 : NSAffineTransform = NSAffineTransform()
-		tf3.translateXBy( playerPosition.x, yBy: playerPosition.y )
-		tf3.rotateByRadians( CGFloat(playerAngle) )
+		tf3.translateXBy( CGFloat(player.get_x()), yBy: CGFloat(player.get_y()) )
+		tf3.rotateByRadians( CGFloat(player.get_angle()) )
 		tf3.concat()
 		
 		NSColor(calibratedRed: 0, green: 0, blue: 1, alpha: 0.6).set()
@@ -141,7 +95,8 @@ Move the player to the position indicated by a click.
 		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
 		hitPosition.x -= self.bounds.width / 2
 		hitPosition.y -= self.bounds.height / 2
-		playerPosition = hitPosition
+		player.set_x( Double(hitPosition.x) )
+		player.set_y( Double(hitPosition.y) )
 		self.refreshDisplay();
 	}
 
@@ -152,7 +107,8 @@ Move the player to the position indicated by a click.
 		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
 		hitPosition.x -= self.bounds.width / 2
 		hitPosition.y -= self.bounds.height / 2
-		playerPosition = hitPosition
+		player.set_x( Double(hitPosition.x) )
+		player.set_y( Double(hitPosition.y) )
 		self.refreshDisplay();
 	}
 	
@@ -161,36 +117,16 @@ Move the player to the position indicated by a click.
 	}
 	
 /**
-Add two radians, wrapping around if they exceed 360 degrees (2 pi).
-
-- parameter radians: The radians to add to angle.
-
-- parameter angle: The angle which to read, add `radians` to, then store back in `angle`.
-*/
-	func addRadians( radians : Double, inout toAngle angle : Double )
-	{
-		angle += radians
-		if( angle >= (M_PI * 2.0) )
-		{
-			angle = angle - (M_PI * 2.0);
-		}
-		if( angle < 0.0 )
-		{
-			angle =  angle + (M_PI * 2.0);
-		}
-	}
-
-/**
 Handle left arrow key and shift + left arrow key by rotating player or target, respectively.
 */
 	override func moveLeft(sender: AnyObject?) {
 		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
 		{
-			addRadians( (M_PI / 180.0) * 6.0, toAngle: &targetAngle )
+			target.turn_by_radians( (M_PI / 180.0) * 6.0 )
 		}
 		else
 		{
-			addRadians( (M_PI / 180.0) * 6.0, toAngle: &playerAngle )
+			player.turn_by_radians( (M_PI / 180.0) * 6.0 )
 		}
 		self.refreshDisplay();
 	}
@@ -201,11 +137,11 @@ Handle right arrow key and shift + right arrow key by rotating player or target,
 	override func moveRight(sender: AnyObject?) {
 		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
 		{
-			addRadians( -(M_PI / 180.0) * 6.0, toAngle: &targetAngle )
+			target.turn_by_radians( -(M_PI / 180.0) * 6.0 )
 		}
 		else
 		{
-			addRadians( -(M_PI / 180.0) * 6.0, toAngle: &playerAngle )
+			player.turn_by_radians( -(M_PI / 180.0) * 6.0 )
 		}
 		self.refreshDisplay();
 	}
@@ -222,12 +158,9 @@ Redraw the view and print out the current state of player and target.
 */
 	func refreshDisplay() {
 		
-		Swift.print("playerTargetAngle (relative): \((self.playerTargetAngle * 180.0) / M_PI)")
-		Swift.print("playerTargetDistance: \(self.playerTargetDistance)")
+		Swift.print("playerTargetAngle (relative): \((self.player.radian_angle_to_actor( target ) * 180.0) / M_PI)")
+		Swift.print("playerTargetDistance: \(self.player.distance_to_actor( target ))")
 		
 		self.setNeedsDisplayInRect( self.bounds );
-		
-		let s : intercombatsystem_cpp.intercombatsystem = .init()
-		s.method( 77 )
 	}
 }
