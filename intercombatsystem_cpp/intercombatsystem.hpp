@@ -78,7 +78,6 @@ public:
 	void	set_health( double n ) CP2SSETTER	{ health = n; }
 	
 	void	add_buff( buff * inBuff ) CP2SMETHOD		{ buffs.push_back( *inBuff ); }
-	void	add_value( buff * inValue ) CP2SMETHOD		{ values.push_back( *inValue ); }
 	
 	void	hit( buff* inAttack, double currDistance, double currAngle ) CP2SMETHOD;
 	
@@ -88,6 +87,5 @@ protected:
 	double				x;
 	double				y;
 	std::vector<buff>	buffs;
-	std::vector<buff>	values;
 };
 

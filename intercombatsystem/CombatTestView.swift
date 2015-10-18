@@ -18,7 +18,7 @@ class CombatTestView: NSView {
 		let	shield = intercombatsystem_cpp.buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -(M_PI / 4), relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: false )
 		target.add_buff( shield );
 		let	plasma_resistance = intercombatsystem_cpp.buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -(M_PI / 4), relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: true )
-		target.add_value( plasma_resistance );
+		target.add_buff( plasma_resistance );
 		target.set_health( 100.0 )
 	}
 	

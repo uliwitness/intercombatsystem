@@ -41,7 +41,6 @@ void intercombatactor_set_y( intercombatactor* _this,  double inY );
 double intercombatactor_get_health( intercombatactor* _this );
 void intercombatactor_set_health( intercombatactor* _this,  double n );
 void intercombatactor_add_buff( intercombatactor* _this,  buff * inBuff );
-void intercombatactor_add_value( intercombatactor* _this,  buff * inValue );
 void intercombatactor_hit( intercombatactor* _this,  buff* inAttack, double currDistance, double currAngle );
 
 #if __cplusplus

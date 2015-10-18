@@ -134,10 +134,6 @@ public class intercombatactor
 		return intercombatactor_add_buff(cppinstance, inBuff.cppinstance)
 	}
 
-	public func add_value(inValue : buff) -> Void {
-		return intercombatactor_add_value(cppinstance, inValue.cppinstance)
-	}
-
 	public func hit(inAttack : buff,currDistance : Double,currAngle : Double) -> Void {
 		return intercombatactor_hit(cppinstance, inAttack.cppinstance,currDistance,currAngle)
 	}

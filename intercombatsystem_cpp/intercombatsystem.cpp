@@ -80,66 +80,31 @@ void	intercombatactor::hit( buff* inAttack, double currDistance, double currAngl
 	if( inAttack->get_max_distance() >= 0.0 && inAttack->get_max_distance() < currDistance )
 		return;	// Out of range, no damage.
 	
-	buff*	affectedValue = nullptr;
-	for( buff& currValue : values )
-	{
-		if( inAttack->get_type() == currValue.get_type() )
-			affectedValue = &currValue;
-	}
+	double	leftoverDamage = inAttack->get_amount();
 	
-	if( affectedValue == nullptr )	// Character doesn't have buffs or debuffs for this value?
-		health -= inAttack->get_amount();	// Damage goes straight through to health.
-	else
+	for( buff& currBuff : buffs )
 	{
-		double	amount = affectedValue->get_amount();
-		double	leftoverDamage = inAttack->get_amount();
-		
-		for( buff& currBuff : buffs )
+		if( inAttack->get_type() == currBuff.get_type() )
 		{
-			if( inAttack->get_type() == currBuff.get_type() )
+			if( currBuff.get_max_distance() < 0.0 || currBuff.get_max_distance() <= currDistance )
 			{
-				if( currBuff.get_max_distance() < 0.0 || currBuff.get_max_distance() <= currDistance )
+				double	nonBleedthrough = currBuff.get_amount() * (1.0 -currBuff.get_bleedthrough());
+				if( leftoverDamage <= 0 && nonBleedthrough > -leftoverDamage )
 				{
-					double	nonBleedthrough = currBuff.get_amount() * (1.0 -currBuff.get_bleedthrough());
-					if( currBuff.get_permanent() )
-						amount += nonBleedthrough;
-					else
-					{
-						if( leftoverDamage <= 0 && nonBleedthrough > -leftoverDamage )
-						{
-							nonBleedthrough = -leftoverDamage;	// At most subtract as much as we have, don't have strikes add to our health.
-						}
-						leftoverDamage += nonBleedthrough;
-						currBuff.set_amount( currBuff.get_amount() -nonBleedthrough );
-					}
-					health += currBuff.get_amount() * currBuff.get_bleedthrough();
+					nonBleedthrough = -leftoverDamage;	// At most subtract as much as we have, don't have strikes add to our health.
 				}
+				leftoverDamage += nonBleedthrough;
+				currBuff.set_amount( currBuff.get_amount() -nonBleedthrough );
 			}
 		}
-		
-		amount += leftoverDamage;
-		
-		if( amount > 0 )	// Still something left? Update this stat.
-		{
-			if( amount > affectedValue->get_max_amount() && affectedValue->get_max_amount() >= 0 )
-				amount = affectedValue->get_max_amount();
-			affectedValue->set_amount( amount );
-		}
-		else	// amount <= 0? Any excess damage now goes straight through to health.
-		{
-			affectedValue->set_amount(0);
-			health += leftoverDamage;
-		}
 	}
+	
+	health += leftoverDamage;
 	
 	printf("health = %f\n", health );
 	for( buff& currBuff : buffs )
 	{
 		printf("\t[BUFF]  type = %d amount = %f\n", currBuff.get_type(), currBuff.get_amount() );
-	}
-	for( buff& currValue : values )
-	{
-		printf("\t[VALUE] type = %d amount = %f\n", currValue.get_type(), currValue.get_amount() );
 	}
 }
 
