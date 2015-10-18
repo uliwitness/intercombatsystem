@@ -148,51 +148,46 @@ class CombatTestView: NSView {
 	}
 	
 	override func keyDown(theEvent: NSEvent) {
-		let theChar : String = theEvent.characters!
-		if( !theChar.isEmpty )
+		interpretKeyEvents([theEvent])
+	}
+	
+	func normalizeAngle( angle : Double ) -> Double
+	{
+		if( angle >= (M_PI * 2.0) )
 		{
-			if theEvent.modifierFlags.contains( .ShiftKeyMask )
-			{
-				switch( theChar[theChar.startIndex] )
-				{
-					case Character(UnicodeScalar(NSLeftArrowFunctionKey)):
-						targetAngle += (M_PI / 180.0) * 6.0
-					case Character(UnicodeScalar(NSRightArrowFunctionKey)):
-						targetAngle -= (M_PI / 180.0) * 6.0
-					default:
-						break
-				}
-				
-				if( targetAngle >= (M_PI * 2.0) )
-				{
-					targetAngle -= (M_PI * 2.0);
-				}
-				if( targetAngle < 0.0 )
-				{
-					targetAngle += (M_PI * 2.0);
-				}
-			}
-			else
-			{
-				switch( theChar[theChar.startIndex] )
-				{
-					case Character(UnicodeScalar(NSLeftArrowFunctionKey)):
-						playerAngle += (M_PI / 180.0) * 6.0
-					case Character(UnicodeScalar(NSRightArrowFunctionKey)):
-						playerAngle -= (M_PI / 180.0) * 6.0
-					default:
-						break
-				}
-				
-				if( playerAngle >= (M_PI * 2.0) )
-				{
-					playerAngle -= (M_PI * 2.0);
-				}
-				if( playerAngle < 0.0 )
-				{
-					playerAngle += (M_PI * 2.0);
-				}
-			}
+			return angle - (M_PI * 2.0);
+		}
+		if( angle < 0.0 )
+		{
+			return angle + (M_PI * 2.0);
+		}
+		return angle
+	}
+
+	override func moveLeft(sender: AnyObject?) {
+		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
+		{
+			targetAngle += (M_PI / 180.0) * 6.0
+			targetAngle = normalizeAngle(targetAngle)
+		}
+		else
+		{
+			playerAngle += (M_PI / 180.0) * 6.0
+			playerAngle = normalizeAngle(playerAngle)
+		}
+		self.refreshDisplay();
+	}
+	
+	override func moveRight(sender: AnyObject?) {
+		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
+		{
+			targetAngle -= (M_PI / 180.0) * 6.0
+			targetAngle = normalizeAngle(targetAngle)
+		}
+		else
+		{
+			playerAngle -= (M_PI / 180.0) * 6.0
+			playerAngle = normalizeAngle(playerAngle)
 		}
 		self.refreshDisplay();
 	}
