@@ -60,6 +60,9 @@ class CombatTestView: NSView {
 		}
 	}
 	
+/**
+Draw our view contents, i.e. a player, a target, direction indicators etc.
+*/
     override func drawRect(dirtyRect: NSRect) {
         super.drawRect(dirtyRect)
 		
@@ -126,11 +129,14 @@ class CombatTestView: NSView {
 		NSGraphicsContext.restoreGraphicsState()
     }
 	
+/**
+Move the player to the position indicated by a click.
+*/
 	override func mouseDown(theEvent: NSEvent) {
-		if( self.window!.firstResponder != self )
+		if( self.window!.firstResponder != self )	// Not yet have keyboard focus? User prolly wants that.
 		{
-			self.window?.makeFirstResponder( self )
-			return;
+			self.window?.makeFirstResponder( self )	// Focus.
+			return;									// Don't move player, user might just want to rotate player.
 		}
 		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
 		hitPosition.x -= self.bounds.width / 2
@@ -139,6 +145,9 @@ class CombatTestView: NSView {
 		self.refreshDisplay();
 	}
 
+/**
+Move the player to the position indicated by a click.
+*/
 	override func mouseDragged(theEvent: NSEvent) {
 		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
 		hitPosition.x -= self.bounds.width / 2
@@ -151,51 +160,66 @@ class CombatTestView: NSView {
 		interpretKeyEvents([theEvent])
 	}
 	
-	func normalizeAngle( angle : Double ) -> Double
+/**
+Add two radians, wrapping around if they exceed 360 degrees (2 pi).
+
+- parameter radians: The radians to add to angle.
+
+- parameter angle: The angle which to read, add `radians` to, then store back in `angle`.
+*/
+	func addRadians( radians : Double, inout toAngle angle : Double )
 	{
+		angle += radians
 		if( angle >= (M_PI * 2.0) )
 		{
-			return angle - (M_PI * 2.0);
+			angle = angle - (M_PI * 2.0);
 		}
 		if( angle < 0.0 )
 		{
-			return angle + (M_PI * 2.0);
+			angle =  angle + (M_PI * 2.0);
 		}
-		return angle
 	}
 
+/**
+Handle left arrow key and shift + left arrow key by rotating player or target, respectively.
+*/
 	override func moveLeft(sender: AnyObject?) {
 		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
 		{
-			targetAngle += (M_PI / 180.0) * 6.0
-			targetAngle = normalizeAngle(targetAngle)
+			addRadians( (M_PI / 180.0) * 6.0, toAngle: &targetAngle )
 		}
 		else
 		{
-			playerAngle += (M_PI / 180.0) * 6.0
-			playerAngle = normalizeAngle(playerAngle)
+			addRadians( (M_PI / 180.0) * 6.0, toAngle: &playerAngle )
 		}
 		self.refreshDisplay();
 	}
 	
+/**
+Handle right arrow key and shift + right arrow key by rotating player or target, respectively.
+*/
 	override func moveRight(sender: AnyObject?) {
 		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
 		{
-			targetAngle -= (M_PI / 180.0) * 6.0
-			targetAngle = normalizeAngle(targetAngle)
+			addRadians( -(M_PI / 180.0) * 6.0, toAngle: &targetAngle )
 		}
 		else
 		{
-			playerAngle -= (M_PI / 180.0) * 6.0
-			playerAngle = normalizeAngle(playerAngle)
+			addRadians( -(M_PI / 180.0) * 6.0, toAngle: &playerAngle )
 		}
 		self.refreshDisplay();
 	}
 	
+/**
+Enable us to handle keypresses.
+*/
 	override func becomeFirstResponder() -> Bool {
 		return true
 	}
 	
+/**
+Redraw the view and print out the current state of player and target.
+*/
 	func refreshDisplay() {
 		
 		Swift.print("playerTargetAngle (relative): \((self.playerTargetAngle * 180.0) / M_PI)")
