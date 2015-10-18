@@ -45,6 +45,20 @@ class CombatTestView: NSView {
 			return playerTargetAngleRelative
 		}
 	}
+	var playerTargetDistance : CGFloat
+	{
+		get
+		{
+			let	targetPosition = NSZeroPoint
+			var	distance : CGFloat = 0.0;
+			
+			let xdiff = playerPosition.x - targetPosition.x;
+			let ydiff = playerPosition.y - targetPosition.y;
+			distance = sqrt( (xdiff * xdiff) + (ydiff * ydiff) )
+			
+			return distance;
+		}
+	}
 	
     override func drawRect(dirtyRect: NSRect) {
         super.drawRect(dirtyRect)
@@ -113,7 +127,11 @@ class CombatTestView: NSView {
     }
 	
 	override func mouseDown(theEvent: NSEvent) {
-		self.window?.makeFirstResponder( self )
+		if( self.window!.firstResponder != self )
+		{
+			self.window?.makeFirstResponder( self )
+			return;
+		}
 		var	hitPosition = self.convertPoint( theEvent.locationInWindow, fromView: nil )
 		hitPosition.x -= self.bounds.width / 2
 		hitPosition.y -= self.bounds.height / 2
@@ -186,10 +204,11 @@ class CombatTestView: NSView {
 	func refreshDisplay() {
 		
 		Swift.print("playerTargetAngle (relative): \((self.playerTargetAngle * 180.0) / M_PI)")
+		Swift.print("playerTargetDistance: \(self.playerTargetDistance)")
 		
 		self.setNeedsDisplayInRect( self.bounds );
 		
-		let s : intercombatsystem_cpp.Swifty = intercombatsystem_cpp.Swifty()
+		let s : intercombatsystem_cpp.intercombatsystem = intercombatsystem_cpp.intercombatsystem()
 		s.method()
 	}
 }
