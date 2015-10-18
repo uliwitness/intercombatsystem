@@ -6,17 +6,26 @@
 //  Copyright © 2015 Uli Kusterer. All rights reserved.
 //
 
-#ifndef intercombatsystem_number_h
-#define intercombatsystem_number_h
+#pragma once
 
-#if __cplusplus
-extern "C" {
+#include <stdio.h>
+
+
+#ifndef CP2SINIT
+#define CP2SINIT
+#define CP2SMETHOD
+#define CP2SCLASS
 #endif
 
-int	intercombatsystem_number( void );
 
-#if __cplusplus
-}
-#endif
+class intercombatsystem CP2SCLASS
+{
+public:
+	intercombatsystem() CP2SINIT : ivar(1234)	{}
+	
+	void	method( int theNum ) CP2SMETHOD	{ printf("ivar = %d\n", ivar); }
+	
+protected:
+	int	ivar;
+};
 
-#endif /* intercombatsystem_number_h */

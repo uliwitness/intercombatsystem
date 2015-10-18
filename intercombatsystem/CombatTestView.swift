@@ -227,7 +227,7 @@ Redraw the view and print out the current state of player and target.
 		
 		self.setNeedsDisplayInRect( self.bounds );
 		
-		let s : intercombatsystem_cpp.intercombatsystem = intercombatsystem_cpp.intercombatsystem()
-		s.method()
+		let s : intercombatsystem_cpp.intercombatsystem = .init()
+		s.method( 77 )
 	}
 }

@@ -15,8 +15,9 @@
 		550774C91BD3B1B100299EC5 /* intercombatsystem_cpp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		550774CF1BD3B24700299EC5 /* intercombatsystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550774CE1BD3B24700299EC5 /* intercombatsystem.swift */; settings = {ASSET_TAGS = (); }; };
 		550774D11BD3B40800299EC5 /* intercombatsystem_bridging_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */; settings = {ASSET_TAGS = (); }; };
-		550774D41BD3B49F00299EC5 /* intercombatsystem_number.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550774D21BD3B49F00299EC5 /* intercombatsystem_number.cpp */; settings = {ASSET_TAGS = (); }; };
 		550774D51BD3B49F00299EC5 /* intercombatsystem_number.h in Headers */ = {isa = PBXBuildFile; fileRef = 550774D31BD3B49F00299EC5 /* intercombatsystem_number.h */; settings = {ASSET_TAGS = (); }; };
+		55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */; settings = {ASSET_TAGS = (); }; };
+		55CD86F41BD41A81008E93A9 /* intercombatsystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 55CD86F21BD41A81008E93A9 /* intercombatsystem.h */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,8 +55,9 @@
 		550774C51BD3B1B100299EC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		550774CE1BD3B24700299EC5 /* intercombatsystem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = intercombatsystem.swift; sourceTree = "<group>"; };
 		550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem_bridging_header.h; sourceTree = "<group>"; };
-		550774D21BD3B49F00299EC5 /* intercombatsystem_number.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem_number.cpp; sourceTree = "<group>"; };
 		550774D31BD3B49F00299EC5 /* intercombatsystem_number.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem_number.h; sourceTree = "<group>"; };
+		55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem.cpp; sourceTree = "<group>"; };
+		55CD86F21BD41A81008E93A9 /* intercombatsystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +115,8 @@
 				550774CE1BD3B24700299EC5 /* intercombatsystem.swift */,
 				550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */,
 				550774D31BD3B49F00299EC5 /* intercombatsystem_number.h */,
-				550774D21BD3B49F00299EC5 /* intercombatsystem_number.cpp */,
+				55CD86F21BD41A81008E93A9 /* intercombatsystem.h */,
+				55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */,
 				550774C51BD3B1B100299EC5 /* Info.plist */,
 			);
 			path = intercombatsystem_cpp;
@@ -128,6 +131,7 @@
 			files = (
 				550774D11BD3B40800299EC5 /* intercombatsystem_bridging_header.h in Headers */,
 				550774D51BD3B49F00299EC5 /* intercombatsystem_number.h in Headers */,
+				55CD86F41BD41A81008E93A9 /* intercombatsystem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,8 +245,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				550774D41BD3B49F00299EC5 /* intercombatsystem_number.cpp in Sources */,
 				550774CF1BD3B24700299EC5 /* intercombatsystem.swift in Sources */,
+				55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +444,7 @@
 				550774B91BD38F5700299EC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		550774CA1BD3B1B100299EC5 /* Build configuration list for PBXNativeTarget "intercombatsystem_cpp" */ = {
 			isa = XCConfigurationList;
@@ -448,6 +453,7 @@
 				550774CC1BD3B1B100299EC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
