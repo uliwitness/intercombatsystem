@@ -155,6 +155,11 @@ extern "C" void intercombatactor_set_health( intercombatactor* _this,  double n 
 	return _this->set_health(n);
 }
 
+extern "C" double intercombatactor_get_value( intercombatactor* _this,  int buffType )
+{
+	return _this->get_value(buffType);
+}
+
 extern "C" void intercombatactor_add_buff( intercombatactor* _this,  buff * inBuff )
 {
 	return _this->add_buff(inBuff);

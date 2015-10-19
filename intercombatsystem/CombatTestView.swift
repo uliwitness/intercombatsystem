@@ -9,26 +9,34 @@
 import Cocoa
 import intercombatsystem_cpp
 
+typealias intercombatactor = intercombatsystem_cpp.intercombatactor
+typealias buff = intercombatsystem_cpp.buff
+
 class CombatTestView: NSView {
 	
-	var	player : intercombatsystem_cpp.intercombatactor = .init()
-	var	target : intercombatsystem_cpp.intercombatactor = .init()
+	var	player = intercombatactor()
+	var	target = intercombatactor()
 	var shooting = false
 	var didHit = false
 	
 	override func awakeFromNib() {
-		let	shield = intercombatsystem_cpp.buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -M_PI, relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: false )
+		player.set_y( -50 )
+		let	shield = buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -M_PI, relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: false )
 		target.add_buff( shield );
-		let	plasma_resistance = intercombatsystem_cpp.buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -M_PI, relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: true )
+		let	plasma_resistance = buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -M_PI, relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: true )
 		target.add_buff( plasma_resistance );
 		target.set_health( 100.0 )
+		
+		self.window?.makeFirstResponder( self )
 	}
 	
 /**
 Draw our view contents, i.e. a player, a target, direction indicators etc.
 */
     override func drawRect(dirtyRect: NSRect) {
-        super.drawRect(dirtyRect)
+	
+		NSColor.whiteColor().set()
+        NSBezierPath.fillRect( self.bounds )
 		
 		NSGraphicsContext.saveGraphicsState()
 		
@@ -93,27 +101,52 @@ Draw our view contents, i.e. a player, a target, direction indicators etc.
 		// Draw shot, if any:
 		if( shooting )
 		{
+			if( didHit )
+			{
+				let	health = target.get_health()
+				if( health > 0)
+				{
+					let	shieldHealth = target.get_value( 1 );
+					if( shieldHealth > 0 )
+					{
+						NSString(string:"\(shieldHealth)").drawAtPoint( NSPoint( x: target.get_x(), y: target.get_y() + playerSizeHalf + 48.0 ), withAttributes: [NSForegroundColorAttributeName: NSColor.cyanColor(), NSFontAttributeName: NSFont.systemFontOfSize( 18, weight: 500)] )
+					}
+					NSString(string:"\(health)").drawAtPoint( NSPoint( x: target.get_x(), y: target.get_y() + playerSizeHalf + 24.0 ), withAttributes: [NSForegroundColorAttributeName: NSColor.blackColor(), NSFontAttributeName: NSFont.systemFontOfSize( 18, weight: 500)] )
+				}
+				else
+				{
+					NSString(string:"X").drawAtPoint( NSPoint( x: target.get_x(), y: target.get_y() + playerSizeHalf + 24.0 ), withAttributes: [NSForegroundColorAttributeName: NSColor.redColor(), NSFontAttributeName: NSFont.systemFontOfSize( 48, weight: 500)] )
+				}
+			}
+			
 			let	playerPos = NSPoint( x: player.get_x(), y: player.get_y() )
+			let startPos = pointAtAngle( player.get_angle(), distance: playerSizeHalf, fromPoint: playerPos )
 			NSColor.redColor().set()
 			if( didHit )
 			{
-				NSBezierPath.strokeLineFromPoint( playerPos, toPoint: NSPoint( x: target.get_x(), y: target.get_y() ) )
+				NSBezierPath.strokeLineFromPoint( startPos, toPoint: NSPoint( x: target.get_x(), y: target.get_y() ) )
 			}
 			else	// No hit? Shoot straight ahead and stop in emptiness:
 			{
-				let	shotDistance = 50.0
-				var	angle = player.get_angle() + (M_PI / 2.0)
-				if( angle > (M_PI * 2.0) )
-				{
-					angle -= M_PI * 2.0
-				}
-				let	targetPos = NSPoint( x: player.get_x() + shotDistance * cos( angle ), y: player.get_y() + shotDistance * sin( angle ) )
-				NSBezierPath.strokeLineFromPoint( playerPos, toPoint: targetPos )
+				let startPos = pointAtAngle( player.get_angle(), distance: playerSizeHalf, fromPoint: playerPos )
+				let targetPos = pointAtAngle( player.get_angle(), distance: playerSizeHalf + 50.0, fromPoint: playerPos )
+				NSBezierPath.strokeLineFromPoint( startPos, toPoint: targetPos )
 			}
 		}
 		
 		NSGraphicsContext.restoreGraphicsState()
     }
+	
+	
+	func pointAtAngle( radians : Double, distance theDistance : Double, fromPoint thePoint : NSPoint ) -> NSPoint
+	{
+		var	angle = radians + (M_PI / 2.0)
+		if( angle > (M_PI * 2.0) )
+		{
+			angle -= M_PI * 2.0
+		}
+		return NSPoint( x: Double(thePoint.x) + theDistance * cos( angle ), y: Double(thePoint.y) + theDistance * sin( angle ) )
+	}
 	
 /**
 Move the player to the position indicated by a click.
@@ -181,10 +214,11 @@ Handle shift + right arrow key by rotating target.
 	}
 
 	override func moveUp(sender: AnyObject?) {
-		let	attack = intercombatsystem_cpp.buff( type: 1, amount: -10, max_amount: -1.0, start_angle: -(M_PI / 4), relative_angle: M_PI / 2, max_distance: 100.0, bleedthrough: 0.0, permanent: false )
+		let	attack = buff( type: 1, amount: -10, max_amount: -1.0, start_angle: -(M_PI / 4), relative_angle: M_PI / 2, max_distance: 100.0, bleedthrough: 0.0, permanent: false )
 		self.shooting = true;
 		self.didHit = target.hit( attack, attacker: player )
 		self.refreshDisplay();
+		NSRunLoop.currentRunLoop().cancelPerformSelector( "removeShot:", target: self, argument: nil )
 		self.performSelector( "removeShot:", withObject: nil, afterDelay: 0.5 )
 	}
 	

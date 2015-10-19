@@ -130,6 +130,10 @@ public class intercombatactor
 		return intercombatactor_set_health(cppinstance, n)
 	}
 
+	public func get_value(buffType : Int32) -> Double {
+		return intercombatactor_get_value(cppinstance, buffType)
+	}
+
 	public func add_buff(inBuff : buff) -> Void {
 		return intercombatactor_add_buff(cppinstance, inBuff.cppinstance)
 	}

@@ -77,6 +77,8 @@ public:
 	double	get_health() CP2SGETTER				{ return health; }
 	void	set_health( double n ) CP2SSETTER	{ health = n; }
 	
+	double	get_value( int buffType ) CP2SGETTER;
+	
 	void	add_buff( buff * inBuff ) CP2SMETHOD		{ buffs.push_back( *inBuff ); }
 	
 	bool	hit( buff* inAttack, intercombatactor* attacker ) CP2SMETHOD;

@@ -117,6 +117,8 @@ bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 	}
 	
 	health += leftoverDamage;
+	if( health < 0.0 )
+		health = 0.0;
 	
 	printf("health = %f\n", health );
 	for( buff& currBuff : buffs )
@@ -125,5 +127,17 @@ bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 	}
 	
 	return true;
+}
+
+
+double	intercombatactor::get_value( int buffType )
+{
+	double	amount = 0.0;
+	for( buff& currBuff : buffs )
+	{
+		if( currBuff.get_type() == buffType )
+			amount += currBuff.get_amount();
+	}
+	return amount;
 }
 

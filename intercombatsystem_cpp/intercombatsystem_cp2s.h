@@ -40,6 +40,7 @@ double intercombatactor_get_y( intercombatactor* _this );
 void intercombatactor_set_y( intercombatactor* _this,  double inY );
 double intercombatactor_get_health( intercombatactor* _this );
 void intercombatactor_set_health( intercombatactor* _this,  double n );
+double intercombatactor_get_value( intercombatactor* _this,  int buffType );
 void intercombatactor_add_buff( intercombatactor* _this,  buff * inBuff );
 bool intercombatactor_hit( intercombatactor* _this,  buff* inAttack, intercombatactor* attacker );
 
