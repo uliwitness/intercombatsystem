@@ -160,7 +160,7 @@ extern "C" void intercombatactor_add_buff( intercombatactor* _this,  buff * inBu
 	return _this->add_buff(inBuff);
 }
 
-extern "C" void intercombatactor_hit( intercombatactor* _this,  buff* inAttack, intercombatactor* attacker )
+extern "C" bool intercombatactor_hit( intercombatactor* _this,  buff* inAttack, intercombatactor* attacker )
 {
 	return _this->hit(inAttack,attacker);
 }

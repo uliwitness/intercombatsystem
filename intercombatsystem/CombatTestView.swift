@@ -13,6 +13,8 @@ class CombatTestView: NSView {
 	
 	var	player : intercombatsystem_cpp.intercombatactor = .init()
 	var	target : intercombatsystem_cpp.intercombatactor = .init()
+	var shooting = false
+	var didHit = false
 	
 	override func awakeFromNib() {
 		let	shield = intercombatsystem_cpp.buff( type: 1, amount: 100.0, max_amount: 100.0, start_angle: -M_PI, relative_angle: M_PI * 2, max_distance: -1.0, bleedthrough: 0.0, permanent: false )
@@ -88,6 +90,28 @@ Draw our view contents, i.e. a player, a target, direction indicators etc.
 		triangle2.fill()
 		NSGraphicsContext.restoreGraphicsState()
 		
+		// Draw shot, if any:
+		if( shooting )
+		{
+			let	playerPos = NSPoint( x: player.get_x(), y: player.get_y() )
+			NSColor.redColor().set()
+			if( didHit )
+			{
+				NSBezierPath.strokeLineFromPoint( playerPos, toPoint: NSPoint( x: target.get_x(), y: target.get_y() ) )
+			}
+			else	// No hit? Shoot straight ahead and stop in emptiness:
+			{
+				let	shotDistance = 50.0
+				var	angle = player.get_angle() + (M_PI / 2.0)
+				if( angle > (M_PI * 2.0) )
+				{
+					angle -= M_PI * 2.0
+				}
+				let	targetPos = NSPoint( x: player.get_x() + shotDistance * cos( angle ), y: player.get_y() + shotDistance * sin( angle ) )
+				NSBezierPath.strokeLineFromPoint( playerPos, toPoint: targetPos )
+			}
+		}
+		
 		NSGraphicsContext.restoreGraphicsState()
     }
 	
@@ -125,17 +149,18 @@ Move the player to the position indicated by a click.
 	}
 	
 /**
-Handle left arrow key and shift + left arrow key by rotating player or target, respectively.
+Handle left arrow key by rotating player.
 */
 	override func moveLeft(sender: AnyObject?) {
-		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
-		{
-			target.turn_by_radians( (M_PI / 180.0) * 6.0 )
-		}
-		else
-		{
-			player.turn_by_radians( (M_PI / 180.0) * 6.0 )
-		}
+		player.turn_by_radians( (M_PI / 180.0) * 6.0 )
+		self.refreshDisplay();
+	}
+
+/**
+Handle alt + left arrow key by rotating target.
+*/
+	override func moveBackwardAndModifySelection(sender: AnyObject?) {
+		target.turn_by_radians( (M_PI / 180.0) * 6.0 )
 		self.refreshDisplay();
 	}
 	
@@ -143,21 +168,30 @@ Handle left arrow key and shift + left arrow key by rotating player or target, r
 Handle right arrow key and shift + right arrow key by rotating player or target, respectively.
 */
 	override func moveRight(sender: AnyObject?) {
-		if NSApplication.sharedApplication().currentEvent!.modifierFlags.contains( .ShiftKeyMask )
-		{
-			target.turn_by_radians( -(M_PI / 180.0) * 6.0 )
-		}
-		else
-		{
-			player.turn_by_radians( -(M_PI / 180.0) * 6.0 )
-		}
+		player.turn_by_radians( -(M_PI / 180.0) * 6.0 )
+		self.refreshDisplay();
+	}
+
+/**
+Handle shift + right arrow key by rotating target.
+*/
+	override func moveForwardAndModifySelection(sender: AnyObject?) {
+		target.turn_by_radians( -(M_PI / 180.0) * 6.0 )
 		self.refreshDisplay();
 	}
 
 	override func moveUp(sender: AnyObject?) {
 		let	attack = intercombatsystem_cpp.buff( type: 1, amount: -10, max_amount: -1.0, start_angle: -(M_PI / 4), relative_angle: M_PI / 2, max_distance: 100.0, bleedthrough: 0.0, permanent: false )
-		target.hit( attack, attacker: player )
+		self.shooting = true;
+		self.didHit = target.hit( attack, attacker: player )
 		self.refreshDisplay();
+		self.performSelector( "removeShot:", withObject: nil, afterDelay: 0.5 )
+	}
+	
+	
+	func removeShot( sender: AnyObject? ) {
+		self.shooting = false;
+		self.setNeedsDisplayInRect( self.bounds )
 	}
 	
 /**

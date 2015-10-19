@@ -134,7 +134,7 @@ public class intercombatactor
 		return intercombatactor_add_buff(cppinstance, inBuff.cppinstance)
 	}
 
-	public func hit(inAttack : buff,attacker : intercombatactor) -> Void {
+	public func hit(inAttack : buff,attacker : intercombatactor) -> Bool {
 		return intercombatactor_hit(cppinstance, inAttack.cppinstance,attacker.cppinstance)
 	}
 

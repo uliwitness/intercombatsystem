@@ -75,17 +75,20 @@ double	intercombatactor::distance_to_actor( intercombatactor* target )
 //	resistance can have a bleedthrough percentage that passes even if we're at 100%
 
 
-void	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
+bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 {
 	double	currDistance = attacker->distance_to_actor(this);
 	if( inAttack->get_max_distance() >= 0.0 && inAttack->get_max_distance() < currDistance )
-		return;	// Out of range, no damage.
+	{
+		printf("Too far away from target.\n");
+		return false;	// Out of range, no damage.
+	}
 	
 	double	currAngle = attacker->radian_angle_to_actor(this);
 	if( inAttack->get_start_angle() > currAngle || (inAttack->get_start_angle() +inAttack->get_relative_angle()) < currAngle )
 	{
 		printf("Not facing the target.\n");
-		return;
+		return false;
 	}
 	
 	double	reverseAngle = radian_angle_to_actor(attacker);
@@ -120,5 +123,7 @@ void	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 	{
 		printf("\ttype = %d amount = %f\n", currBuff.get_type(), currBuff.get_amount() );
 	}
+	
+	return true;
 }
 
