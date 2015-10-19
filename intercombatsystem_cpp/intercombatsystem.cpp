@@ -75,11 +75,20 @@ double	intercombatactor::distance_to_actor( intercombatactor* target )
 //	resistance can have a bleedthrough percentage that passes even if we're at 100%
 
 
-void	intercombatactor::hit( buff* inAttack, double currDistance, double currAngle )
+void	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 {
+	double	currDistance = attacker->distance_to_actor(this);
 	if( inAttack->get_max_distance() >= 0.0 && inAttack->get_max_distance() < currDistance )
 		return;	// Out of range, no damage.
 	
+	double	currAngle = attacker->radian_angle_to_actor(this);
+	if( inAttack->get_start_angle() > currAngle || (inAttack->get_start_angle() +inAttack->get_relative_angle()) < currAngle )
+	{
+		printf("Not facing the target.\n");
+		return;
+	}
+	
+	double	reverseAngle = radian_angle_to_actor(attacker);
 	double	leftoverDamage = inAttack->get_amount();
 	
 	for( buff& currBuff : buffs )
@@ -88,13 +97,18 @@ void	intercombatactor::hit( buff* inAttack, double currDistance, double currAngl
 		{
 			if( currBuff.get_max_distance() < 0.0 || currBuff.get_max_distance() <= currDistance )
 			{
-				double	nonBleedthrough = currBuff.get_amount() * (1.0 -currBuff.get_bleedthrough());
-				if( leftoverDamage <= 0 && nonBleedthrough > -leftoverDamage )
+				if( inAttack->get_start_angle() <= currAngle && (inAttack->get_start_angle() +inAttack->get_relative_angle()) >= reverseAngle )
 				{
-					nonBleedthrough = -leftoverDamage;	// At most subtract as much as we have, don't have strikes add to our health.
+					double	nonBleedthrough = currBuff.get_amount() * (1.0 -currBuff.get_bleedthrough());
+					if( leftoverDamage <= 0 && nonBleedthrough > -leftoverDamage )
+					{
+						nonBleedthrough = -leftoverDamage;	// At most subtract as much as we have, don't have strikes add to our health.
+					}
+					leftoverDamage += nonBleedthrough;
+					currBuff.set_amount( currBuff.get_amount() -nonBleedthrough );
 				}
-				leftoverDamage += nonBleedthrough;
-				currBuff.set_amount( currBuff.get_amount() -nonBleedthrough );
+				else
+					printf("One buff not within target angle.\n");
 			}
 		}
 	}
@@ -104,7 +118,7 @@ void	intercombatactor::hit( buff* inAttack, double currDistance, double currAngl
 	printf("health = %f\n", health );
 	for( buff& currBuff : buffs )
 	{
-		printf("\t[BUFF]  type = %d amount = %f\n", currBuff.get_type(), currBuff.get_amount() );
+		printf("\ttype = %d amount = %f\n", currBuff.get_type(), currBuff.get_amount() );
 	}
 }
 

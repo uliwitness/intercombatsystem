@@ -79,7 +79,7 @@ public:
 	
 	void	add_buff( buff * inBuff ) CP2SMETHOD		{ buffs.push_back( *inBuff ); }
 	
-	void	hit( buff* inAttack, double currDistance, double currAngle ) CP2SMETHOD;
+	void	hit( buff* inAttack, intercombatactor* attacker ) CP2SMETHOD;
 	
 protected:
 	double				health;
