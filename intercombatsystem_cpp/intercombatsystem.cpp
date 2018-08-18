@@ -8,6 +8,7 @@
 
 #include "intercombatsystem.hpp"
 #include <math.h>
+#include <iostream>
 
 
 intercombatactor::intercombatactor()
@@ -31,16 +32,16 @@ void	intercombatactor::turn_by_radians( double radians )
 }
 
 
-double	intercombatactor::radian_angle_to_actor( intercombatactor* target )
+double	intercombatactor::radian_angle_to_actor( intercombatactor &target )
 {
 	double	playerTargetAngle = atan2( 0.0, 0.0 );
-	if( (x > target->x) )
+	if( (x > target.x) )
 	{
-		playerTargetAngle = atan2( x - target->x, target->y - y );
+		playerTargetAngle = atan2( x - target.x, target.y - y );
 	}
-	else if( (x < target->x) )
+	else if( (x < target.x) )
 	{
-		playerTargetAngle = (M_PI * 2.0) - atan2( target->x - x, target->y - y );
+		playerTargetAngle = (M_PI * 2.0) - atan2( target.x - x, target.y - y );
 	}
 	
 	double	playerTargetAngleRelative = (playerTargetAngle - angle);
@@ -57,11 +58,11 @@ double	intercombatactor::radian_angle_to_actor( intercombatactor* target )
 }
 
 
-double	intercombatactor::distance_to_actor( intercombatactor* target )
+double	intercombatactor::distance_to_actor( intercombatactor &target )
 {
 	double distance = 0.0;
-	double xdiff = x - target->x;
-	double ydiff = y - target->y;
+	double xdiff = x - target.x;
+	double ydiff = y - target.y;
 	distance = sqrt( (xdiff * xdiff) + (ydiff * ydiff) );
 	
 	return distance;
@@ -75,32 +76,32 @@ double	intercombatactor::distance_to_actor( intercombatactor* target )
 //	resistance can have a bleedthrough percentage that passes even if we're at 100%
 
 
-bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
+bool	intercombatactor::hit( buff &inAttack, timestamp currentTime, intercombatactor &attacker )
 {
-	double	currDistance = attacker->distance_to_actor(this);
-	if( inAttack->get_max_distance() >= 0.0 && inAttack->get_max_distance() < currDistance )
+	double	currDistance = attacker.distance_to_actor(*this);
+	if( inAttack.get_max_distance() >= 0.0 && inAttack.get_max_distance() < currDistance )
 	{
 		printf("Too far away from target.\n");
 		return false;	// Out of range, no damage.
 	}
 	
-	double	currAngle = attacker->radian_angle_to_actor(this);
-	if( inAttack->get_start_angle() > currAngle || (inAttack->get_start_angle() +inAttack->get_relative_angle()) < currAngle )
+	double	currAngle = attacker.radian_angle_to_actor(*this);
+	if( inAttack.get_start_angle() > currAngle || (inAttack.get_start_angle() + inAttack.get_relative_angle()) < currAngle )
 	{
 		printf("Not facing the target.\n");
 		return false;
 	}
 	
 	double	reverseAngle = radian_angle_to_actor(attacker);
-	double	leftoverDamage = inAttack->get_amount();
+	double	leftoverDamage = inAttack.get_amount();
 	
 	for( buff& currBuff : buffs )
 	{
-		if( inAttack->get_type() == currBuff.get_type() )
+		if( inAttack.get_type() == currBuff.get_type() )
 		{
 			if( currBuff.get_max_distance() < 0.0 || currBuff.get_max_distance() <= currDistance )
 			{
-				if( inAttack->get_start_angle() <= currAngle && (inAttack->get_start_angle() +inAttack->get_relative_angle()) >= reverseAngle )
+				if( inAttack.get_start_angle() <= currAngle && (inAttack.get_start_angle() +inAttack.get_relative_angle()) >= reverseAngle )
 				{
 					double	nonBleedthrough = currBuff.get_amount() * (1.0 -currBuff.get_bleedthrough());
 					if( leftoverDamage <= 0 && nonBleedthrough > -leftoverDamage )
@@ -109,6 +110,11 @@ bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 					}
 					leftoverDamage += nonBleedthrough;
 					currBuff.set_amount( currBuff.get_amount() -nonBleedthrough );
+					currBuff.set_last_time_damage_taken( currentTime );
+					if (mBuffChangedHandler)
+					{
+						mBuffChangedHandler( *this, currBuff );
+					}
 				}
 				else
 					printf("One buff not within target angle.\n");
@@ -116,10 +122,16 @@ bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 		}
 	}
 	
+	bool healthChanged = leftoverDamage > 0 && health > 0.0;
 	health += leftoverDamage;
 	if( health < 0.0 )
 		health = 0.0;
-	
+
+	if (healthChanged && mHealthChangedHandler)
+	{
+		mHealthChangedHandler( *this );
+	}
+
 	printf("health = %f\n", health );
 	for( buff& currBuff : buffs )
 	{
@@ -127,6 +139,15 @@ bool	intercombatactor::hit( buff* inAttack, intercombatactor* attacker )
 	}
 	
 	return true;
+}
+
+
+void	intercombatactor::replenish_buffs(bool isInCombat, timestamp currentTime)
+{
+	for (buff& currBuff : buffs)
+	{
+		currBuff.replenish( isInCombat, currentTime, *this );
+	}
 }
 
 
@@ -141,3 +162,49 @@ double	intercombatactor::get_value( int buffType )
 	return amount;
 }
 
+
+void	buff::replenish(bool isInCombat, timestamp currentTime, intercombatactor &owner)
+{
+	timestamp_difference numberOfTurns = currentTime -mLastTimeReplenished;
+
+	if (owner.get_health() <= 0.0)
+	{
+		return;
+	}
+	
+	double amountToReplenish = 0;
+	
+	if (isInCombat)
+	{
+		timestamp_difference turnsSinceDamage = currentTime -mLastTimeDamageTaken;
+		if (turnsSinceDamage >= mTimeToConsiderLull)
+		{
+			amountToReplenish = double(numberOfTurns) * mReplenishPerTurnInLull;
+		}
+		else
+		{
+			amountToReplenish = double(numberOfTurns) * mReplenishPerTurnInCombat;
+		}
+	}
+	else
+	{
+		amountToReplenish = double(numberOfTurns) * mReplenishPerTurnOutOfCombat;
+	}
+	
+	if (amountToReplenish > 0 && mAmount < mMax_amount)
+	{
+		double finalAmount = mAmount + amountToReplenish;
+		if (finalAmount <= mMax_amount)
+		{
+			mAmount = finalAmount;
+			std::cout << "Replenished " << std::hex << this << " by " << amountToReplenish << " to " << mAmount << std::endl;
+		}
+		else
+		{
+			mAmount = mMax_amount;
+		}
+		
+		owner.buff_changed(*this);
+	}
+	mLastTimeReplenished = currentTime;
+}

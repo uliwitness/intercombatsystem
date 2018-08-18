@@ -11,58 +11,74 @@
 
 
 @interface ICSCombatTestView ()
+{
+	intercombatactor _player;
+	intercombatactor _target;
+	NSTimeInterval _startTime;
+}
 
-@property intercombatactor * player;
-@property intercombatactor * target;
 @property BOOL shooting;
 @property BOOL didHit;
+@property BOOL showHealth;
+@property NSTimer * replenishTimer;
 
 @end
 
 
 @implementation ICSCombatTestView
 
--(instancetype)	initWithFrame: (NSRect)box
-{
-	self = [super initWithFrame: box];
-	if (self)
-	{
-		self.player = new intercombatactor;
-		self.target = new intercombatactor;
-	}
-	return self;
-}
-
--(instancetype)	initWithCoder: (NSCoder *)decoder
-{
-	self = [super initWithCoder: decoder];
-	if (self)
-	{
-		self.player = new intercombatactor;
-		self.target = new intercombatactor;
-	}
-	return self;
-}
-
 -(void)	dealloc
 {
-	delete self.player;
-	self.player = nullptr;
-	delete self.target;
-	self.target = nullptr;
+	[self.replenishTimer invalidate];
 }
+
 
 -(void)	awakeFromNib
 {
-	self.player->set_y( -50 );
-	buff * shield = new buff( 1, 100.0, 100.0, -M_PI, M_PI * 2, -1.0, 0.0, false );
-	self.target->add_buff( shield );
-	buff * plasma_resistance = new buff( 1, 100.0, 100.0, -M_PI, M_PI * 2, -1.0, 0.0, true );
-	self.target->add_buff( plasma_resistance );
-	self.target->set_health( 100.0 );
+	_startTime = NSDate.timeIntervalSinceReferenceDate;
+	
+	__weak typeof(self) weakSelf = self;
+	
+	_target.set_buff_changed_handler([weakSelf](intercombatactor& inTarget, buff& inBuff)
+	{
+		static double lastNotifiedValue = 100.0;
+		
+		typeof(self) strongSelf = weakSelf;
+		if (strongSelf && truncf(inBuff.get_amount()) != lastNotifiedValue)
+		{
+			strongSelf.showHealth = YES;
+			[strongSelf refreshDisplay];
+			[NSRunLoop.currentRunLoop cancelPerformSelector: @selector(removeShot:) target: strongSelf argument: nil];
+			[strongSelf performSelector: @selector(removeShot:) withObject: nil afterDelay: 0.5];
+			lastNotifiedValue = truncf(inBuff.get_amount());
+		}
+	});
+	_player.set_y( -50 );
+	buff shield( 1, 100.0, 100.0, -M_PI, M_PI * 2, -1.0, 0.0, 0.0, 5.0, timestamp(30), 0.5, false );
+	_target.add_buff( shield );
+	buff plasma_resistance( 1, 100.0, 100.0, -M_PI, M_PI * 2, -1.0, 0.0, 0.0, 0.0, timestamp(30), 0.0, true );
+	_target.add_buff( plasma_resistance );
+	_target.set_health( 100.0 );
 	
 	[self.window makeFirstResponder: self];
+	
+	self.replenishTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 repeats:YES block:^(NSTimer * _Nonnull timer) {
+		typeof(self) strongSelf = weakSelf;
+		if (strongSelf)
+		{
+			timestamp currentTime = strongSelf.currentTime;
+			strongSelf->_player.replenish_buffs(true, currentTime);
+			strongSelf->_target.replenish_buffs(true, currentTime);
+		}
+	}];
 }
+
+
+-(timestamp)	currentTime
+{
+	return timestamp((NSDate.timeIntervalSinceReferenceDate - _startTime) * 10.0);
+}
+
 
 /**
  Draw our view contents, i.e. a player, a target, direction indicators etc.
@@ -96,7 +112,7 @@
 	
 	[NSGraphicsContext saveGraphicsState];
 	NSAffineTransform * tf2 = [NSAffineTransform transform];
-	[tf2 rotateByRadians: self.target->get_angle()];
+	[tf2 rotateByRadians: _target.get_angle()];
 	[tf2 concat];
 	
 	[[NSColor colorWithCalibratedRed: 1 green: 0 blue: 0 alpha: 0.6] set];
@@ -111,7 +127,7 @@
 	// Draw player:
 	CGFloat	playerSize = 32.0;
 	CGFloat	playerSizeHalf = playerSize / 2.0;
-	NSRect playerBox = NSMakeRect( self.player->get_x() - playerSizeHalf, self.player->get_y() - playerSizeHalf, playerSize, playerSize );
+	NSRect playerBox = NSMakeRect( _player.get_x() - playerSizeHalf, _player.get_y() - playerSizeHalf, playerSize, playerSize );
 	[[NSColor colorWithCalibratedRed: 0 green: 0 blue: 1 alpha: 0.6] set];
 	[[NSBezierPath bezierPathWithOvalInRect: playerBox] fill];
 	[NSColor.blueColor set];
@@ -119,8 +135,8 @@
 	
 	[NSGraphicsContext saveGraphicsState];
 	NSAffineTransform * tf3 = [NSAffineTransform transform];
-	[tf3 translateXBy: self.player->get_x() yBy: self.player->get_y()];
-	[tf3 rotateByRadians: self.player->get_angle()];
+	[tf3 translateXBy: _player.get_x() yBy: _player.get_y()];
+	[tf3 rotateByRadians: _player.get_angle()];
 	[tf3 concat];
 	
 	[[NSColor colorWithCalibratedRed: 0 green: 0 blue: 1 alpha: 0.6] set];
@@ -132,39 +148,39 @@
 	[triangle2 fill];
 	[NSGraphicsContext restoreGraphicsState];
 	
+	if( self.showHealth )
+	{
+		CGFloat health = _target.get_health();
+		if( health > 0)
+		{
+			CGFloat	shieldHealth = _target.get_value( 1 );
+			if( shieldHealth > 0 )
+			{
+				[[NSString stringWithFormat: @"%.0f", shieldHealth] drawAtPoint: NSMakePoint( _target.get_x(), _target.get_y( ) + playerSizeHalf + 48.0 ) withAttributes: @{ NSForegroundColorAttributeName: NSColor.cyanColor, NSFontAttributeName: [NSFont systemFontOfSize: 18 weight: 500] }];
+			}
+			[[NSString stringWithFormat: @"%.0f", health] drawAtPoint: NSMakePoint( _target.get_x(), _target.get_y( ) + playerSizeHalf + 24.0 ) withAttributes: @{ NSForegroundColorAttributeName: NSColor.blackColor, NSFontAttributeName: [NSFont systemFontOfSize: 18 weight: 500] }];
+		}
+		else
+		{
+			[@"X" drawAtPoint: NSMakePoint( _target.get_x(), _target.get_y() + playerSizeHalf + 24.0 ) withAttributes: @{ NSForegroundColorAttributeName: NSColor.redColor, NSFontAttributeName: [NSFont systemFontOfSize: 48 weight: 500] }];
+		}
+	}
+
 	// Draw shot, if any:
 	if( self.shooting )
 	{
-		if( self.didHit )
-		{
-			CGFloat health = self.target->get_health();
-			if( health > 0)
-			{
-				CGFloat	shieldHealth = self.target->get_value( 1 );
-				if( shieldHealth > 0 )
-				{
-					[[NSString stringWithFormat: @"%f", shieldHealth] drawAtPoint: NSMakePoint( self.target->get_x(), self.target->get_y( ) + playerSizeHalf + 48.0 ) withAttributes: @{ NSForegroundColorAttributeName: NSColor.cyanColor, NSFontAttributeName: [NSFont systemFontOfSize: 18 weight: 500] }];
-				}
-				[[NSString stringWithFormat: @"%f", health] drawAtPoint: NSMakePoint( self.target->get_x(), self.target->get_y( ) + playerSizeHalf + 24.0 ) withAttributes: @{ NSForegroundColorAttributeName: NSColor.blackColor, NSFontAttributeName: [NSFont systemFontOfSize: 18 weight: 500] }];
-			}
-			else
-			{
-				[@"X" drawAtPoint: NSMakePoint( self.target->get_x(), self.target->get_y() + playerSizeHalf + 24.0 ) withAttributes: @{ NSForegroundColorAttributeName: NSColor.redColor, NSFontAttributeName: [NSFont systemFontOfSize: 48 weight: 500] }];
-			}
-		}
-		
-		NSPoint playerPos = NSMakePoint( self.player->get_x(), self.player->get_y() );
-		NSPoint startPos = [self pointAtAngleInRadians: self.player->get_angle() distance: playerSizeHalf fromPoint: playerPos];
+		NSPoint playerPos = NSMakePoint( _player.get_x(), _player.get_y() );
+		NSPoint startPos = [self pointAtAngleInRadians: _player.get_angle() distance: playerSizeHalf fromPoint: playerPos];
 		[NSColor.redColor set];
 		if( self.didHit )
 		{
-			[NSBezierPath strokeLineFromPoint: startPos toPoint: NSMakePoint( self.target->get_x(), self.target->get_y() )];
+			[NSBezierPath strokeLineFromPoint: startPos toPoint: NSMakePoint( _target.get_x(), _target.get_y() )];
 		}
 		else	// No hit? Shoot straight ahead and stop in emptiness:
 		{
 			CGFloat	attackRange = [self attackWithCurrentWeapon].get_max_distance();
-			NSPoint startPos = [self pointAtAngleInRadians: self.player->get_angle() distance: playerSizeHalf fromPoint: playerPos];
-			NSPoint targetPos = [self pointAtAngleInRadians: self.player->get_angle() distance: attackRange fromPoint: playerPos];
+			NSPoint startPos = [self pointAtAngleInRadians: _player.get_angle() distance: playerSizeHalf fromPoint: playerPos];
+			NSPoint targetPos = [self pointAtAngleInRadians: _player.get_angle() distance: attackRange fromPoint: playerPos];
 			[NSBezierPath strokeLineFromPoint: startPos toPoint: targetPos];
 		}
 	}
@@ -183,6 +199,7 @@
 	return NSMakePoint( thePoint.x + theDistance * cos( angle ), thePoint.y + theDistance * sin( angle ) );
 }
 
+
 /**
  Move the player to the position indicated by a click.
  */
@@ -196,10 +213,11 @@
 	NSPoint hitPosition = [self convertPoint: theEvent.locationInWindow fromView: nil];
 	hitPosition.x -= self.bounds.size.width / 2;
 	hitPosition.y -= self.bounds.size.height / 2;
-	self.player->set_x( hitPosition.x );
-	self.player->set_y( hitPosition.y );
+	_player.set_x( hitPosition.x );
+	_player.set_y( hitPosition.y );
 	[self refreshDisplay];
 }
+
 
 /**
  Move the player to the position indicated by a click.
@@ -209,62 +227,73 @@
 	NSPoint hitPosition = [self convertPoint: theEvent.locationInWindow fromView: nil];
 	hitPosition.x -= self.bounds.size.width / 2;
 	hitPosition.y -= self.bounds.size.height / 2;
-	self.player->set_x( hitPosition.x );
-	self.player->set_y( hitPosition.y );
+	_player.set_x( hitPosition.x );
+	_player.set_y( hitPosition.y );
 	[self refreshDisplay];
 }
+
 
 -(void)	keyDown: (NSEvent *)theEvent
 {
 	[self interpretKeyEvents: @[theEvent]];
 }
 
+
 /**
  Handle left arrow key by rotating player.
  */
 -(void)	moveLeft: (id)sender
 {
-	self.player->turn_by_radians( (M_PI / 180.0) * 6.0 );
+	_player.turn_by_radians( (M_PI / 180.0) * 6.0 );
 	[self refreshDisplay];
 }
+
 
 /**
  Handle alt + left arrow key by rotating target.
  */
 -(void)	moveWordLeft: (id)sender
 {
-	self.target->turn_by_radians( (M_PI / 180.0) * 6.0 );
+	_target.turn_by_radians( (M_PI / 180.0) * 6.0 );
 	[self refreshDisplay];
 }
+
 
 /**
  Handle right arrow key and shift + right arrow key by rotating player or target, respectively.
  */
 -(void)	moveRight: (id)sender
 {
-	self.player->turn_by_radians( -(M_PI / 180.0) * 6.0 );
+	_player.turn_by_radians( -(M_PI / 180.0) * 6.0 );
 	[self refreshDisplay];
 }
+
 
 /**
  Handle shift + right arrow key by rotating target.
  */
 -(void)	moveWordRight: (id)sender
 {
-	self.target->turn_by_radians( -(M_PI / 180.0) * 6.0 );
+	_target.turn_by_radians( -(M_PI / 180.0) * 6.0 );
 	[self refreshDisplay];
 }
 
+
 -(buff) attackWithCurrentWeapon
 {
-	return buff( 1, -10, -1.0, -(M_PI / 4), M_PI / 2, 100.0, 0.0, false );
+	return buff( 1, -10, -1.0, -(M_PI / 4), M_PI / 2, 100.0, 0.0, 0.0, 0.0, timestamp(0), 0.0, false );
 }
+
 
 -(void)	moveUp: (id)sender
 {
 	buff attack = [self attackWithCurrentWeapon];
-	self.shooting = true;
-	self.didHit = self.target->hit( &attack, self.player );
+	self.shooting = YES;
+	self.didHit = _target.hit( attack, self.currentTime, _player );
+	if (self.didHit)
+	{
+		self.showHealth = YES;
+	}
 	[self refreshDisplay];
 	[NSRunLoop.currentRunLoop cancelPerformSelector: @selector(removeShot:) target: self argument: nil];
 	[self performSelector: @selector(removeShot:) withObject: nil afterDelay: 0.5];
@@ -273,9 +302,11 @@
 
 -(void)	removeShot:(id)sender
 {
-	self.shooting = false;
+	self.shooting = NO;
+	self.showHealth = NO;
 	[self setNeedsDisplayInRect: self.bounds];
 }
+
 
 /**
  Enable us to handle keypresses.
@@ -285,14 +316,15 @@
 	return YES;
 }
 
+
 /**
  Redraw the view and print out the current state of player and target.
  */
 -(void) refreshDisplay
 {
 	
-	NSLog( @"playerTargetAngle (relative): %f", (self.player->radian_angle_to_actor( self.target ) * 180.0) / M_PI );
-	NSLog( @"playerTargetDistance: %f", self.player->distance_to_actor( self.target ) );
+	NSLog( @"playerTargetAngle (relative): %f", (_player.radian_angle_to_actor( _target ) * 180.0) / M_PI );
+	NSLog( @"playerTargetDistance: %f", _player.distance_to_actor( _target ) );
 	
 	[self setNeedsDisplayInRect: self.bounds];
 }

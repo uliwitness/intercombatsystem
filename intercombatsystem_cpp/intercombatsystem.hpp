@@ -10,12 +10,20 @@
 
 #include <stdio.h>
 #include <vector>
+#include <functional>
+
+
+typedef uint64_t timestamp; // Just an increasing turn counter.
+typedef uint64_t timestamp_difference; // difference between two timestamps.
+
+
+class intercombatactor;
 
 
 class buff
 {
 public:
-	buff( int type, double amount, double max_amount, double start_angle, double relative_angle, double max_distance, double bleedthrough, bool permanent ) : mType(type), mAmount(amount), mMax_amount(max_amount), mStart_angle(start_angle), mRelative_angle(relative_angle), mMax_distance(max_distance), mBleedthrough(bleedthrough), mPermanent(permanent) {}
+	buff( int type, double amount, double max_amount, double start_angle, double relative_angle, double max_distance, double bleedthrough, double replenishPerTurnInCombat, double replenishPerTurnOutOfCombat, timestamp timeToConsiderLull, double replenishPerTurnInLull, bool permanent ) : mType(type), mAmount(amount), mMax_amount(max_amount), mStart_angle(start_angle), mRelative_angle(relative_angle), mMax_distance(max_distance), mBleedthrough(bleedthrough), mPermanent(permanent), mReplenishPerTurnInCombat(replenishPerTurnInCombat), mReplenishPerTurnOutOfCombat(replenishPerTurnOutOfCombat), mTimeToConsiderLull(timeToConsiderLull), mReplenishPerTurnInLull(replenishPerTurnInLull) {}
 	
 	int		get_type()						{ return mType; }
 	void	set_type( int inType )			{ mType = inType; }
@@ -33,16 +41,26 @@ public:
 	void	set_max_distance( double n )	{ mMax_distance = n; }
 	bool	get_permanent()					{ return mPermanent; }
 	void	set_permanent( bool n )			{ mPermanent = n; }
+	void		set_last_time_damage_taken( timestamp n )	{ mLastTimeDamageTaken = n; }
+	timestamp	get_last_time_damage_taken()				{ return mLastTimeDamageTaken; }
+
+	void	replenish(bool isInCombat, timestamp currentTime, intercombatactor& owner);
 
 protected:
-	int			mType;
-	double		mBleedthrough;	// 0.0 ... 1.0, should be 0.0 for attacks.
-	double		mAmount;		// Amount of damage/health of this stat.
-	double		mMax_amount;	// Maximum amount of health this stat can have before we ignore buffs. Negative means unlimited Only used for values.
-	double		mStart_angle;	// Angle in radians where active area starts. (For attacks or directional shields)
-	double		mRelative_angle;// Radians relative to this start angle where active area ends. (E.g. for attacks or directional shields)
-	double		mMax_distance;	// Max. distance at which this has effect. negative means unlimited (E.g. for shields)
-	bool		mPermanent;		// A permanent buff/debuff maintains its value. A non-permanent buff/debuff can be used up.
+	int						mType;
+	double					mBleedthrough;	// 0.0 ... 1.0, should be 0.0 for attacks.
+	double					mAmount;		// Amount of damage/health of this stat.
+	double					mMax_amount;	// Maximum amount of health this stat can have before we ignore buffs. Negative means unlimited Only used for values.
+	double					mStart_angle;	// Angle in radians where active area starts. (For attacks or directional shields)
+	double					mRelative_angle;// Radians relative to this start angle where active area ends. (E.g. for attacks or directional shields)
+	double					mMax_distance;	// Max. distance at which this has effect. negative means unlimited (E.g. for shields)
+	double					mReplenishPerTurnInCombat;
+	double					mReplenishPerTurnOutOfCombat;
+	double					mReplenishPerTurnInLull;		// lull == not taken damage since mTimeToConsiderLull.
+	timestamp_difference	mTimeToConsiderLull;
+	timestamp				mLastTimeDamageTaken = 0;
+	timestamp				mLastTimeReplenished = 0;
+	bool					mPermanent;		// A permanent buff/debuff maintains its value. A non-permanent buff/debuff can be used up.
 };
 
 
@@ -54,8 +72,8 @@ public:
 	intercombatactor();
 	
 	void	turn_by_radians( double radians );
-	double	radian_angle_to_actor( intercombatactor* target );
-	double	distance_to_actor( intercombatactor* target );
+	double	radian_angle_to_actor( intercombatactor &target );
+	double	distance_to_actor( intercombatactor &target );
 	
 	double	get_angle()	{ return angle; }
 
@@ -70,15 +88,23 @@ public:
 	
 	double	get_value( int buffType );
 	
-	void	add_buff( buff * inBuff )		{ buffs.push_back( *inBuff ); }
+	void	add_buff( buff& inBuff )		{ buffs.push_back( inBuff ); }
 	
-	bool	hit( buff* inAttack, intercombatactor* attacker );
+	bool	hit( buff &inAttack, timestamp currentTime, intercombatactor &attacker );
 	
+	void	replenish_buffs(bool isInCombat, timestamp currentTime);
+	void	buff_changed(buff& inBuff)		{ if (mBuffChangedHandler) { mBuffChangedHandler( *this, inBuff ); } }
+
+	void	set_buff_changed_handler(std::function<void(intercombatactor&,buff&)> inBuffChangedHandler) { mBuffChangedHandler = inBuffChangedHandler; };
+	void	set_health_changed_handler(std::function<void(intercombatactor&)> inHealthChangedHandler) { mHealthChangedHandler = inHealthChangedHandler; };
+
 protected:
 	double				health;
 	double				angle;
 	double				x;
 	double				y;
 	std::vector<buff>	buffs;
+	std::function<void(intercombatactor&,buff&)>	mBuffChangedHandler;
+	std::function<void(intercombatactor&)> 			mHealthChangedHandler;
 };
 
