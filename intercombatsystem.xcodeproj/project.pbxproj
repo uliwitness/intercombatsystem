@@ -7,18 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		550774AE1BD38F5700299EC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550774AD1BD38F5700299EC5 /* AppDelegate.swift */; };
 		550774B01BD38F5700299EC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 550774AF1BD38F5700299EC5 /* Assets.xcassets */; };
 		550774B31BD38F5700299EC5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 550774B11BD38F5700299EC5 /* MainMenu.xib */; };
-		550774BB1BD38F7800299EC5 /* CombatTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550774BA1BD38F7800299EC5 /* CombatTestView.swift */; settings = {ASSET_TAGS = (); }; };
 		550774C81BD3B1B100299EC5 /* intercombatsystem_cpp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */; };
 		550774C91BD3B1B100299EC5 /* intercombatsystem_cpp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		550774D11BD3B40800299EC5 /* intercombatsystem_bridging_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */; settings = {ASSET_TAGS = (); }; };
-		55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */; settings = {ASSET_TAGS = (); }; };
-		55CD86F81BD43387008E93A9 /* intercombatsystem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */; settings = {ASSET_TAGS = (); }; };
-		55CD87021BD433BA008E93A9 /* intercombatsystem_cp2s.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86FF1BD433BA008E93A9 /* intercombatsystem_cp2s.cpp */; settings = {ASSET_TAGS = (); }; };
-		55CD87031BD433BA008E93A9 /* intercombatsystem_cp2s.h in Headers */ = {isa = PBXBuildFile; fileRef = 55CD87001BD433BA008E93A9 /* intercombatsystem_cp2s.h */; settings = {ASSET_TAGS = (); }; };
-		55CD87041BD433BA008E93A9 /* intercombatsystem_cp2s.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55CD87011BD433BA008E93A9 /* intercombatsystem_cp2s.swift */; settings = {ASSET_TAGS = (); }; };
+		557E51FF2128747500DB169F /* ICSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 557E51FE2128747500DB169F /* ICSAppDelegate.m */; };
+		557E52022128751800DB169F /* ICSCombatTestView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 557E52012128751800DB169F /* ICSCombatTestView.mm */; };
+		557E5204212884F700DB169F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 557E5203212884F700DB169F /* main.m */; };
+		55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */; };
+		55CD86F81BD43387008E93A9 /* intercombatsystem.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,19 +44,18 @@
 
 /* Begin PBXFileReference section */
 		550774AA1BD38F5700299EC5 /* intercombatsystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = intercombatsystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		550774AD1BD38F5700299EC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		550774AF1BD38F5700299EC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		550774B21BD38F5700299EC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		550774B41BD38F5700299EC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		550774BA1BD38F7800299EC5 /* CombatTestView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombatTestView.swift; sourceTree = "<group>"; };
 		550774C11BD3B1B100299EC5 /* intercombatsystem_cpp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = intercombatsystem_cpp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		550774C51BD3B1B100299EC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem_bridging_header.h; sourceTree = "<group>"; };
+		557E51FD2128747500DB169F /* ICSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICSAppDelegate.h; sourceTree = "<group>"; };
+		557E51FE2128747500DB169F /* ICSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ICSAppDelegate.m; sourceTree = "<group>"; };
+		557E52002128751800DB169F /* ICSCombatTestView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ICSCombatTestView.h; sourceTree = "<group>"; };
+		557E52012128751800DB169F /* ICSCombatTestView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ICSCombatTestView.mm; sourceTree = "<group>"; };
+		557E5203212884F700DB169F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem.cpp; sourceTree = "<group>"; };
 		55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = intercombatsystem.hpp; sourceTree = "<group>"; };
-		55CD86FF1BD433BA008E93A9 /* intercombatsystem_cp2s.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = intercombatsystem_cp2s.cpp; sourceTree = "<group>"; };
-		55CD87001BD433BA008E93A9 /* intercombatsystem_cp2s.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intercombatsystem_cp2s.h; sourceTree = "<group>"; };
-		55CD87011BD433BA008E93A9 /* intercombatsystem_cp2s.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = intercombatsystem_cp2s.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,11 +98,14 @@
 		550774AC1BD38F5700299EC5 /* intercombatsystem */ = {
 			isa = PBXGroup;
 			children = (
-				550774AD1BD38F5700299EC5 /* AppDelegate.swift */,
-				550774BA1BD38F7800299EC5 /* CombatTestView.swift */,
+				557E51FD2128747500DB169F /* ICSAppDelegate.h */,
+				557E51FE2128747500DB169F /* ICSAppDelegate.m */,
+				557E52002128751800DB169F /* ICSCombatTestView.h */,
+				557E52012128751800DB169F /* ICSCombatTestView.mm */,
 				550774AF1BD38F5700299EC5 /* Assets.xcassets */,
 				550774B11BD38F5700299EC5 /* MainMenu.xib */,
 				550774B41BD38F5700299EC5 /* Info.plist */,
+				557E5203212884F700DB169F /* main.m */,
 			);
 			path = intercombatsystem;
 			sourceTree = "<group>";
@@ -114,23 +113,11 @@
 		550774C21BD3B1B100299EC5 /* intercombatsystem_cpp */ = {
 			isa = PBXGroup;
 			children = (
-				550774D01BD3B40800299EC5 /* intercombatsystem_bridging_header.h */,
 				55CD86F71BD43387008E93A9 /* intercombatsystem.hpp */,
 				55CD86F11BD41A81008E93A9 /* intercombatsystem.cpp */,
-				55CD87051BD433C1008E93A9 /* generated by cp2s */,
 				550774C51BD3B1B100299EC5 /* Info.plist */,
 			);
 			path = intercombatsystem_cpp;
-			sourceTree = "<group>";
-		};
-		55CD87051BD433C1008E93A9 /* generated by cp2s */ = {
-			isa = PBXGroup;
-			children = (
-				55CD86FF1BD433BA008E93A9 /* intercombatsystem_cp2s.cpp */,
-				55CD87001BD433BA008E93A9 /* intercombatsystem_cp2s.h */,
-				55CD87011BD433BA008E93A9 /* intercombatsystem_cp2s.swift */,
-			);
-			name = "generated by cp2s";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,8 +128,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				55CD86F81BD43387008E93A9 /* intercombatsystem.hpp in Headers */,
-				550774D11BD3B40800299EC5 /* intercombatsystem_bridging_header.h in Headers */,
-				55CD87031BD433BA008E93A9 /* intercombatsystem_cp2s.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +183,7 @@
 				TargetAttributes = {
 					550774A91BD38F5700299EC5 = {
 						CreatedOnToolsVersion = 7.0.1;
+						LastSwiftMigration = 1000;
 					};
 					550774C01BD3B1B100299EC5 = {
 						CreatedOnToolsVersion = 7.0.1;
@@ -247,8 +233,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				550774BB1BD38F7800299EC5 /* CombatTestView.swift in Sources */,
-				550774AE1BD38F5700299EC5 /* AppDelegate.swift in Sources */,
+				557E51FF2128747500DB169F /* ICSAppDelegate.m in Sources */,
+				557E5204212884F700DB169F /* main.m in Sources */,
+				557E52022128751800DB169F /* ICSCombatTestView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,8 +244,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				55CD86F31BD41A81008E93A9 /* intercombatsystem.cpp in Sources */,
-				55CD87021BD433BA008E93A9 /* intercombatsystem_cp2s.cpp in Sources */,
-				55CD87041BD433BA008E93A9 /* intercombatsystem_cp2s.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +310,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -361,6 +347,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -368,12 +355,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = intercombatsystem/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thevoidsoftware.intercombatsystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -381,12 +371,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = intercombatsystem/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.thevoidsoftware.intercombatsystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

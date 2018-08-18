@@ -12,36 +12,27 @@
 #include <vector>
 
 
-#ifndef CP2SINIT
-#define CP2SINIT
-#define CP2SMETHOD
-#define CP2SCLASS
-#define CP2SGETTER
-#define CP2SSETTER
-#endif
-
-
-class buff CP2SCLASS
+class buff
 {
 public:
-	buff( int type, double amount, double max_amount, double start_angle, double relative_angle, double max_distance, double bleedthrough, bool permanent ) CP2SINIT : mType(type), mAmount(amount), mMax_amount(max_amount), mStart_angle(start_angle), mRelative_angle(relative_angle), mMax_distance(max_distance), mBleedthrough(bleedthrough), mPermanent(permanent) {}
+	buff( int type, double amount, double max_amount, double start_angle, double relative_angle, double max_distance, double bleedthrough, bool permanent ) : mType(type), mAmount(amount), mMax_amount(max_amount), mStart_angle(start_angle), mRelative_angle(relative_angle), mMax_distance(max_distance), mBleedthrough(bleedthrough), mPermanent(permanent) {}
 	
-	int		get_type() CP2SGETTER						{ return mType; }
-	void	set_type( int inType ) CP2SSETTER			{ mType = inType; }
-	double	get_bleedthrough() CP2SGETTER				{ return mBleedthrough; }
-	void	set_bleedthrough( double n ) CP2SSETTER		{ mBleedthrough = n; }
-	double	get_amount() CP2SGETTER						{ return mAmount; }
-	void	set_amount( double n ) CP2SSETTER			{ mAmount = n; }
-	double	get_max_amount() CP2SGETTER					{ return mMax_amount; }
-	void	set_max_amount( double n ) CP2SSETTER		{ mMax_amount = n; }
-	double	get_start_angle() CP2SGETTER				{ return mStart_angle; }
-	void	set_start_angle( double n ) CP2SSETTER		{ mStart_angle = n; }
-	double	get_relative_angle() CP2SGETTER				{ return mRelative_angle; }
-	void	set_relative_angle( double n ) CP2SSETTER	{ mRelative_angle = n; }
-	double	get_max_distance() CP2SGETTER				{ return mMax_distance; }
-	void	set_max_distance( double n ) CP2SSETTER		{ mMax_distance = n; }
-	bool	get_permanent() CP2SGETTER					{ return mPermanent; }
-	void	set_permanent( bool n ) CP2SSETTER			{ mPermanent = n; }
+	int		get_type()						{ return mType; }
+	void	set_type( int inType )			{ mType = inType; }
+	double	get_bleedthrough()				{ return mBleedthrough; }
+	void	set_bleedthrough( double n )	{ mBleedthrough = n; }
+	double	get_amount()					{ return mAmount; }
+	void	set_amount( double n )			{ mAmount = n; }
+	double	get_max_amount()				{ return mMax_amount; }
+	void	set_max_amount( double n )		{ mMax_amount = n; }
+	double	get_start_angle()				{ return mStart_angle; }
+	void	set_start_angle( double n )		{ mStart_angle = n; }
+	double	get_relative_angle()			{ return mRelative_angle; }
+	void	set_relative_angle( double n )	{ mRelative_angle = n; }
+	double	get_max_distance()				{ return mMax_distance; }
+	void	set_max_distance( double n )	{ mMax_distance = n; }
+	bool	get_permanent()					{ return mPermanent; }
+	void	set_permanent( bool n )			{ mPermanent = n; }
 
 protected:
 	int			mType;
@@ -57,31 +48,31 @@ protected:
 
 
 
-class intercombatactor CP2SCLASS
+class intercombatactor
 {
 public:
-	intercombatactor() CP2SINIT;
+	intercombatactor();
 	
-	void	turn_by_radians( double radians ) CP2SMETHOD;
-	double	radian_angle_to_actor( intercombatactor* target ) CP2SMETHOD;
-	double	distance_to_actor( intercombatactor* target ) CP2SMETHOD;
+	void	turn_by_radians( double radians );
+	double	radian_angle_to_actor( intercombatactor* target );
+	double	distance_to_actor( intercombatactor* target );
 	
-	double	get_angle() CP2SGETTER	{ return angle; }
+	double	get_angle()	{ return angle; }
 
-	double	get_x() CP2SGETTER					{ return x; }
-	void	set_x( double inX ) CP2SSETTER		{ x = inX; }
+	double	get_x()					{ return x; }
+	void	set_x( double inX )		{ x = inX; }
 
-	double	get_y() CP2SGETTER					{ return y; }
-	void	set_y( double inY ) CP2SSETTER		{ y = inY; }
+	double	get_y()					{ return y; }
+	void	set_y( double inY )		{ y = inY; }
 
-	double	get_health() CP2SGETTER				{ return health; }
-	void	set_health( double n ) CP2SSETTER	{ health = n; }
+	double	get_health()			{ return health; }
+	void	set_health( double n )	{ health = n; }
 	
-	double	get_value( int buffType ) CP2SGETTER;
+	double	get_value( int buffType );
 	
-	void	add_buff( buff * inBuff ) CP2SMETHOD		{ buffs.push_back( *inBuff ); }
+	void	add_buff( buff * inBuff )		{ buffs.push_back( *inBuff ); }
 	
-	bool	hit( buff* inAttack, intercombatactor* attacker ) CP2SMETHOD;
+	bool	hit( buff* inAttack, intercombatactor* attacker );
 	
 protected:
 	double				health;
